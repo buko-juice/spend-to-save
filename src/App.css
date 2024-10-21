@@ -35,11 +35,11 @@
   margin-bottom: 20px;
 }
 
-.purchase-question {
+.purchase-question, .manual-entry {
   margin-bottom: 20px;
 }
 
-button {
+button, select {
   background-color: #3498db;
   border: none;
   color: white;
@@ -54,11 +54,11 @@ button {
   transition: background-color 0.3s;
 }
 
-button:hover {
+button:hover, select:hover {
   background-color: #2980b9;
 }
 
-input[type="number"] {
+input[type="number"], select {
   width: 100%;
   padding: 10px;
   margin: 8px 0;
@@ -132,7 +132,16 @@ h2 {
     margin-bottom: 10px;
   }
 
-  input[type="number"], button {
+  input[type="number"], button, select {
     width: 100%;
   }
+}
+
+.manual-entry select,
+.manual-entry input[type="number"] {
+  margin-bottom: 10px;
+}
+
+.manual-entry button {
+  width: 100%;
 }

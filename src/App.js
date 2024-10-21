@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { debounce } from 'lodash';
 import './App.css';
-import logo from './logo.svg'; // You can replace this with your own logo later
+import logo from './logo.svg'; // Replace with your own logo later
 
 const STEPS = {
   ASK_PURCHASE: 0,
@@ -24,6 +24,14 @@ function App() {
     const saved = localStorage.getItem('totalSpending');
     return saved ? parseFloat(saved) : 0;
   });
+  const [frivolousSpending, setFrivolousSpending] = useState(() => {
+    const saved = localStorage.getItem('frivolousSpending');
+    return saved ? parseFloat(saved) : 0;
+  });
+  const [nonFrivolousSpending, setNonFrivolousSpending] = useState(() => {
+    const saved = localStorage.getItem('nonFrivolousSpending');
+    return saved ? parseFloat(saved) : 0;
+  });
   const [totalSavings, setTotalSavings] = useState(() => {
     const saved = localStorage.getItem('totalSavings');
     return saved ? parseFloat(saved) : 0;
@@ -35,12 +43,16 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
   const [showHistory, setShowHistory] = useState(false);
+  const [manualEntryType, setManualEntryType] = useState('');
+  const [manualEntryAmount, setManualEntryAmount] = useState('');
 
   useEffect(() => {
     localStorage.setItem('totalSpending', totalSpending.toString());
+    localStorage.setItem('frivolousSpending', frivolousSpending.toString());
+    localStorage.setItem('nonFrivolousSpending', nonFrivolousSpending.toString());
     localStorage.setItem('totalSavings', totalSavings.toString());
     localStorage.setItem('spendingHistory', JSON.stringify(spendingHistory));
-  }, [totalSpending, totalSavings, spendingHistory]);
+  }, [totalSpending, frivolousSpending, nonFrivolousSpending, totalSavings, spendingHistory]);
 
   const handlePurchaseType = (type) => {
     setPurchaseType(type);
@@ -52,9 +64,11 @@ function App() {
     if (amount > 0) {
       setTotalSpending(prev => prev + amount);
       if (purchaseType === PURCHASE_TYPES.FRIVOLOUS) {
+        setFrivolousSpending(prev => prev + amount);
         setSavingsAmount(amount * 0.1);
         setStep(STEPS.SHOW_SAVINGS);
       } else {
+        setNonFrivolousSpending(prev => prev + amount);
         addToSpendingHistory(amount, PURCHASE_TYPES.NON_FRIVOLOUS, 0);
         setStep(STEPS.COMPLETE);
       }
@@ -90,15 +104,47 @@ function App() {
     setShowEncouragement(false);
   };
 
+  const handleManualEntry = () => {
+    const amount = parseFloat(manualEntryAmount);
+    if (amount > 0) {
+      switch (manualEntryType) {
+        case PURCHASE_TYPES.FRIVOLOUS:
+          setTotalSpending(prev => prev + amount);
+          setFrivolousSpending(prev => prev + amount);
+          addToSpendingHistory(amount, PURCHASE_TYPES.FRIVOLOUS, 0);
+          break;
+        case PURCHASE_TYPES.NON_FRIVOLOUS:
+          setTotalSpending(prev => prev + amount);
+          setNonFrivolousSpending(prev => prev + amount);
+          addToSpendingHistory(amount, PURCHASE_TYPES.NON_FRIVOLOUS, 0);
+          break;
+        case 'Savings':
+          setTotalSavings(prev => prev + amount);
+          addToSpendingHistory(amount, 'Manual Savings', amount);
+          break;
+        default:
+          break;
+      }
+      setManualEntryAmount('');
+      alert(`Successfully added $${amount.toFixed(2)} to ${manualEntryType}.`);
+    } else {
+      alert('Please enter a valid amount.');
+    }
+  };
+
   const clearAllData = () => {
     if (window.confirm("Are you sure you want to clear all your data? This action cannot be undone.")) {
       requestIdleCallback(() => {
         localStorage.removeItem('totalSpending');
+        localStorage.removeItem('frivolousSpending');
+        localStorage.removeItem('nonFrivolousSpending');
         localStorage.removeItem('totalSavings');
         localStorage.removeItem('spendingHistory');
         
         requestAnimationFrame(() => {
           setTotalSpending(0);
+          setFrivolousSpending(0);
+          setNonFrivolousSpending(0);
           setTotalSavings(0);
           setSpendingHistory([]);
           
@@ -126,6 +172,8 @@ function App() {
         <main>
           <div className="totals-summary">
             <p>Total Spending: ${totalSpending.toFixed(2)}</p>
+            <p>Frivolous Spending: ${frivolousSpending.toFixed(2)}</p>
+            <p>Non-Frivolous Spending: ${nonFrivolousSpending.toFixed(2)}</p>
             <p>Total Savings: ${totalSavings.toFixed(2)}</p>
             <button onClick={toggleHistory}>
               {showHistory ? 'Hide History' : 'View History'}
@@ -134,9 +182,9 @@ function App() {
 
           {showHistory && (
             <section className="history">
-              <h2>Spending History</h2>
+              <h2>Spending and Savings History</h2>
               {spendingHistory.length === 0 ? (
-                <p>No spending recorded yet.</p>
+                <p>No entries recorded yet.</p>
               ) : (
                 <ul>
                   {spendingHistory.map((entry, index) => (
@@ -195,6 +243,26 @@ function App() {
               <button onClick={resetProcess}>Record Another Purchase</button>
             </section>
           )}
+
+          <section className="manual-entry">
+            <h2>Manual Entry</h2>
+            <select 
+              value={manualEntryType} 
+              onChange={(e) => setManualEntryType(e.target.value)}
+            >
+              <option value="">Select Type</option>
+              <option value={PURCHASE_TYPES.FRIVOLOUS}>Frivolous Purchase</option>
+              <option value={PURCHASE_TYPES.NON_FRIVOLOUS}>Non-Frivolous Purchase</option>
+              <option value="Savings">Savings</option>
+            </select>
+            <input 
+              type="number" 
+              value={manualEntryAmount} 
+              onChange={(e) => setManualEntryAmount(e.target.value)}
+              placeholder="Enter amount in $"
+            />
+            <button onClick={handleManualEntry}>Add Entry</button>
+          </section>
 
           <div className="privacy-disclaimer">
             <p>Privacy Notice: All data is stored locally on your device. No personal information is sent to or stored on our servers.</p>
