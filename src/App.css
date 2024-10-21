@@ -1,0 +1,138 @@
+.App {
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.App-header {
+  background-color: #2c3e50;
+  padding: 20px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.App-logo {
+  height: 60px;
+  margin-right: 20px;
+}
+
+.App-header h1 {
+  color: white;
+  margin: 0;
+}
+
+.app-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.totals-summary {
+  background-color: #ecf0f1;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.purchase-question {
+  margin-bottom: 20px;
+}
+
+button {
+  background-color: #3498db;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+}
+
+.privacy-disclaimer {
+  font-size: 0.8em;
+  color: #7f8c8d;
+  margin-top: 20px;
+}
+
+.clear-data-btn {
+  background-color: #e74c3c;
+}
+
+.clear-data-btn:hover {
+  background-color: #c0392b;
+}
+
+.encouragement-message {
+  background-color: #f39c12;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.history {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin-top: 20px;
+  text-align: left;
+}
+
+.history h2 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.history ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.history li {
+  margin-bottom: 5px;
+  font-size: 0.9em;
+}
+
+section {
+  margin-bottom: 30px;
+}
+
+h2 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+@media (max-width: 600px) {
+  .App-header {
+    flex-direction: column;
+  }
+
+  .App-logo {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  input[type="number"], button {
+    width: 100%;
+  }
+}
